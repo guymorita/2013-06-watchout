@@ -12,10 +12,14 @@
   <script>
   var width = 960;
   var height = 500;
+  var pinkCollision = false;
+
   var data = [];
-  for ( var i = 0; i < 2; i++) {
-    data.push({"x": Math.random(), "y": Math.random()});
-  }
+
+    data.push({"x": Math.random(), "y": Math.random(), "type": "pink"});
+    data.push({"x": Math.random(), "y": Math.random(), "type": "pink"});
+    data.push({"x": Math.random(), "y": Math.random(), "type": "pink"});
+
   var h = 1000;
   var svg = d3.select("#container").append("svg:svg")
     .attr("width", width)
@@ -37,15 +41,18 @@
       .attr("fill", "hsl(120, 120, 120)");
 
   function runDetection() {
-    // debugger;
+    pinkCollision = false;
+    svg.selectAll("circle#pink").each(collisionDetection)
+    if (pinkCollision){
+      console.log("collision!");
+      data.push({"x": Math.random(), "y": Math.random(), "type": "pink"});
+      update(data);
+
+    }
     if(svg.selectAll("circle.blue").each(collisionDetection)) {
 
     }
-    if (svg.selectAll("circle.pink").each(collisionDetection)) {
-      // create a new data point
-      // up a counter
-
-    }
+  }
   //make function to move him around
   function characterMove() {
     var mouseLocation = d3.svg.mouse(this);
@@ -59,15 +66,15 @@
     var caesar = svg.select("circle.caesar");
     var enemy = d3.select(this);
     var sumOfRadii = parseInt(caesar.attr("r")) + parseInt(enemy.attr("r"));
-    // debugger;
     var caesarX = parseInt(caesar.attr("cx")),
         caesarY = parseInt(caesar.attr("cy")),
         enemyX  = parseInt(enemy.attr("cx")),
         enemyY  = parseInt(enemy.attr("cy"));
     var distance = Math.sqrt(Math.pow((caesarX - enemyX), 2) + Math.pow((caesarY - enemyY), 2));
-    console.log('distance', distance);
-    console.log('sum of radii', sumOfRadii);
-    if (distance <= sumOfRadii) { return true; }
+    // console.log('distance', distance);
+    // console.log('sum of radii', sumOfRadii);
+    if (distance <= sumOfRadii) { pinkCollision = true;}
+    
   }
   
   //function to create a dot
@@ -75,6 +82,7 @@
       .data(data)
       .enter().append("svg:circle")
       .attr("class", "dots")
+      .attr("id", function(d) { return d.type })
       .attr("cx", function(d) { return x(d.x) })
       .attr("cy", function(d) { return y(d.y) })
       .attr("stroke-width", "none")
@@ -83,18 +91,26 @@
       // .attr("visibility", "hidden")
       .attr("r", function() { return r(Math.random()) })
 
-  function update(){
-    var data = [];
-    for ( var i = 0; i < 100; i++) {
-      data.push({"x": Math.random(), "y": Math.random()});
+  function update(data){
+    for ( var i = 0; i < data.length; i++) {
+      data[i]["x"] = Math.random();
+      data[i]["y"] = Math.random();
     }
-    svg.selectAll("circle.dots")
+    var newCircles = svg.selectAll("circle.dots")
         .data(data)
         .transition().duration(3000)
         .attr("cx", function(d) { return x(d.x) })
         .attr("cy", function(d) { return y(d.y) })
     //select the circle nodes
     //update their positional attributes
+    newCircles.enter().append("circle")
+      .attr("class", "dots")
+      .attr("id", function(d) { return d.type })
+      .attr("cx", function(d) { return x(d.x) })
+      .attr("cy", function(d) { return y(d.y) })
+      .attr("r", function() { return r(Math.random()) })
+
+
   }
 
 setInterval(update, 3000);

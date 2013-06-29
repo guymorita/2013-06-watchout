@@ -1,0 +1,75 @@
+<html>
+<head>
+<style>
+.enemy{
+  fill: red;
+}
+</style>
+</head>
+<body>
+  <script src="http://d3js.org/d3.v2.min.js?2.10.1"></script>
+  <script>
+  var width = 960;
+  var height = 500;
+  var data = [];
+  for ( var i = 0; i < 100; i++) {
+    data.push({"x": Math.random(), "y": Math.random()});
+  }
+  var h = 1000;
+  var svg = d3.select("body").append("svg:svg")
+    .attr("width", width)
+    .attr("height", height)
+
+  var x = d3.scale.linear().domain([0,1]).range([width / 2 - 400,width / 2 + 400]),
+  y = d3.scale.linear().domain([0,1]).range([0,h]),
+  r = d3.scale.linear().domain([0,1]).range([5,10]),
+  c = d3.scale.linear().domain([0,1]).range(["hsl(120, 50%, 50%)", "hsl(300, 100%, 75%)"]).interpolate(d3.interpolateHsl)
+  
+  svg.selectAll("circle")
+      .data(data)
+      .enter().append("svg:circle")
+      .attr("cx", function(d) { return x(d.x) })
+      .attr("cy", function(d) { return y(d.y) })
+      .attr("stroke-width", "none")
+      .attr("fill", function() { return c(Math.random()) })
+      .attr("fill-opacity", .5)
+      // .attr("visibility", "hidden")
+      .attr("r", function() { return r(Math.random()) })
+
+var update = function(){
+  var data = [];
+  for ( var i = 0; i < 100; i++) {
+    data.push({"x": Math.random(), "y": Math.random()});
+  }
+  svg.selectAll("circle")
+      .data(data)
+      .attr("cx", function(d) { return x(d.x) })
+      .attr("cy", function(d) { return y(d.y) })
+  //select the circle nodes
+  //update their positional attributes
+
+  //
+}
+setInterval(update, 1500)
+  // var width = 960
+  // var height = 500
+
+  // var svg = d3.select("body")
+  //   .append("svg")
+  //     .attr("width", width)
+  //     .attr("height", height)
+
+  // function update(){
+  //   var theCircle = d3.select("svg").append("circle")
+  //     .attr("class", "enemy");
+  // }
+  // update();
+
+  </script>
+</body>
+</html>
+
+
+
+
+
